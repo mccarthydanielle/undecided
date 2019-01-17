@@ -28,3 +28,8 @@ export const createRoom = (newRoom = {}, showCreateError) => {
 
   }
 }
+
+/*======joining a room===============*/
+
+/*======destroying a room===============*/
+
