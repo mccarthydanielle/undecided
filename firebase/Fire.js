@@ -1,83 +1,15 @@
 import * as firebase from 'firebase';
 
-class Fire {
-  constructor() {
-    this.init();
-    this.observeAuth();
-  }
-
-  init = () =>
-    firebase.initializeApp({
-      apiKey: "AIzaSyAF_LvwCt6Jp4uIfdrytmxQYo_15a5Qk-Q",
-      authDomain: "undecided-9fb75.firebaseapp.com",
-      databaseURL: "https://undecided-9fb75.firebaseio.com",
-      projectId: "undecided-9fb75",
-      storageBucket: "undecided-9fb75.appspot.com",
-      messagingSenderId: "551297185325"
-    });
-
-  observeAuth = () =>
-    firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
-
-  onAuthStateChanged = user => {
-    if (!user) {
-      try {
-        firebase.auth().signInAnonymously();
-      } catch ({ message }) {
-        alert(message);
-      }
-    }
-  };
-
-  get uid() {
-    return (firebase.auth().currentUser || {}).uid;
-  }
-
-  get ref() {
-    return firebase.database().ref('messages');
-  }
-
-  parse = snapshot => {
-    const { timestamp: numberStamp, text, user } = snapshot.val();
-    const { key: _id } = snapshot;
-    const timestamp = new Date(numberStamp);
-    const message = {
-      _id,
-      timestamp,
-      text,
-      user,
-    };
-    return message;
-  };
-
-  on = callback =>
-    this.ref
-      .limitToLast(20)
-      .on('child_added', snapshot => callback(this.parse(snapshot)));
-
-  get timestamp() {
-    return firebase.database.ServerValue.TIMESTAMP;
-  }
-  // send the message to the Backend
-  send = messages => {
-    for (let i = 0; i < messages.length; i++) {
-      const { text, user } = messages[i];
-      const message = {
-        text,
-        user,
-        timestamp: this.timestamp,
-      };
-      this.append(message);
-    }
-  };
-
-  append = message => this.ref.push(message);
-
-  // close the connection to the Backend
-  off() {
-    this.ref.off();
-  }
+const config = {
+  apiKey: "AIzaSyAF_LvwCt6Jp4uIfdrytmxQYo_15a5Qk-Q",
+  authDomain: "undecided-9fb75.firebaseapp.com",
+  databaseURL: "https://undecided-9fb75.firebaseio.com",
+  projectId: "undecided-9fb75",
+  storageBucket: "undecided-9fb75.appspot.com",
+  messagingSenderId: "551297185325"
 }
 
-Fire.shared = new Fire();
-export default Fire;
+firebase.initializeApp(config)
+
+const database = firebase.database();
+export { firebase, database }

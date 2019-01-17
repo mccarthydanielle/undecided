@@ -1,100 +1,111 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { createStackNavigator } from 'react-navigation';
 import {
-  Image,
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
   Button,
   TextInput
 } from 'react-native';
-import { WebBrowser } from 'expo';
-import { MonoText } from '../components/StyledText';
 
-export default class HomeScreen extends React.Component {
+import { createRoom } from '../redux/reducers/rooms/actions'
+
+class HomeScreen extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      roomInput: ''
+      createRoomName: '',
+      joinRoomName: '',
+      newRoomPurpose: ''
     }
+    this.testFunc = this.testFunc.bind(this)
+    this.handleCreateRoom = this.handleCreateRoom.bind(this)
+  }
+
+  testFunc() {
+    console.log('heyyy')
+  }
+
+  handleCreateRoom() {
+    this.props.createNewRoom({
+      name: this.state.createRoomName,
+      prompt: this.state.newRoomPurpose
+    })
+
+    this.props.navigation.navigate('ChatScreen')
+  }
+
+  handleJoinRoom() {
+
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        {/* create room button */}
+        <View>
+          <TextInput
+            style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+            onChangeText={(text) => this.setState({ createRoomName: text })}
+            value={this.state.roomInput}
+            placeholder="Enter New Room Name"
+          />
+          <TextInput
+            style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+            onChangeText={(text) => this.setState({ newRoomPurpose: text })}
+            value={this.state.roomInput}
+            placeholder="What is the purpose of this room?"
+          />
+        </View>
+        <View style={styles.homePageButtons}>
+          <Button
+            onPress={this.handleCreateRoom}
+            title="Create Room"
+            accessibilityLabel="Create Room"
+          />
+        </View>
 
-          {/* create room button */}
-          <View>
-            <TextInput
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-              onChangeText={(text) => this.setState({ roomInput: text })}
-              value={this.state.roomInput}
-              placeholder="Enter Room Name"
-            />
-            <View style={styles.homePageButtons}>
-              <Button
-                style={{
-                  backgroundColor: 'blue',
-                  borderColor: 'white',
-                  borderWidth: 1,
-                  borderRadius: 12,
-                  color: 'white',
-                  fontSize: 24,
-                  fontWeight: 'bold',
-                  overflow: 'hidden',
-                  padding: 12,
-                  textAlign: 'center',
-                }}
-                title="Create Room"
-                accessibilityLabel="Join Room"
-              />
-            </View>
-          </View>
+        {/* end of create room button */}
 
-          {/* end of create room button */}
+        {/* join room input & button */}
 
-          {/* join room input & button */}
+        <View>
+          <TextInput
+            style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+            onChangeText={(text) => this.setState({ joinRoomName: text })}
+            value={this.state.roomInput}
+            placeholder="Input name of existing room"
+          />
 
-          <View>
-            <TextInput
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-              onChangeText={(text) => this.setState({ roomInput: text })}
-              value={this.state.roomInput}
-              placeholder="Enter Room Name"
-            />
-            <View style={styles.homePageButtons}>
-              <Button
-                style={{
-                  backgroundColor: 'blue',
-                  borderColor: 'white',
-                  borderWidth: 1,
-                  borderRadius: 12,
-                  color: 'white',
-                  fontSize: 24,
-                  fontWeight: 'bold',
-                  overflow: 'hidden',
-                  padding: 12,
-                  textAlign: 'center',
-                  width: '50%'
-                }}
-                title="Join Room"
-                accessibilityLabel="Join Room"
-              />
-            </View>
-          </View>
+        </View>
 
-          {/* end of join room input & button */}
+        <View style={styles.homePageButtons}>
+          <Button
+            title="Join Room"
+            accessibilityLabel="Join Room"
+            // need to change this onPress to join room
+            // onPress={this.props.createNewRoom({ name: roomName })}
+            onPress={this.testFunc}
+          />
+        </View>
 
-        </ScrollView>
+        {/* end of join room input & button */}
 
       </View>
     );
   }
 
 }
+
+const mapDispatchToProps = (dispatch) => ({
+  createNewRoom: (room) => dispatch(createRoom(room))
+})
+
+
+export default connect(null, mapDispatchToProps)(HomeScreen)
+
 
 const styles = StyleSheet.create({
   container: {
