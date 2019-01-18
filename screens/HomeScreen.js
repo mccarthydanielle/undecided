@@ -2,23 +2,28 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createStackNavigator } from 'react-navigation';
 import {
-  Platform,
   ScrollView,
   StyleSheet,
   View,
-  Button,
-  TextInput
+  TextInput,
+  Text,
+  Button
 } from 'react-native';
 
 import { createRoom } from '../redux/reducers/rooms/actions'
 
 class HomeScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Undecided!',
+  };
   constructor(props) {
     super(props)
     this.state = {
       createRoomName: '',
       joinRoomName: '',
-      newRoomPurpose: ''
+      newRoomPurpose: '',
+      newRoomUserName: '',
+      joinRoomUserName: ''
     }
     this.testFunc = this.testFunc.bind(this)
     this.handleCreateRoom = this.handleCreateRoom.bind(this)
@@ -31,7 +36,8 @@ class HomeScreen extends React.Component {
   handleCreateRoom() {
     this.props.createNewRoom({
       name: this.state.createRoomName,
-      prompt: this.state.newRoomPurpose
+      prompt: this.state.newRoomPurpose,
+      owner: this.state.newRoomUserName
     })
 
     this.props.navigation.navigate('ChatScreen')
@@ -42,57 +48,84 @@ class HomeScreen extends React.Component {
   }
 
   render() {
+    const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
-        {/* create room button */}
-        <View>
-          <TextInput
-            style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-            onChangeText={(text) => this.setState({ createRoomName: text })}
-            value={this.state.roomInput}
-            placeholder="Enter New Room Name"
-          />
-          <TextInput
-            style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-            onChangeText={(text) => this.setState({ newRoomPurpose: text })}
-            value={this.state.roomInput}
-            placeholder="What is the purpose of this room?"
-          />
-        </View>
-        <View style={styles.homePageButtons}>
-          <Button
-            onPress={this.handleCreateRoom}
-            title="Create Room"
-            accessibilityLabel="Create Room"
-          />
-        </View>
+        <ScrollView>
+          {/* create room button */}
+          <View style={styles.sectionContainer}>
+            <View>
+              <Text style={styles.homePageHeaders}>Create a New Room</Text>
+            </View>
+            <View>
+              <TextInput
+                style={styles.homePageInputs}
+                onChangeText={(text) => this.setState({ createRoomName: text })}
+                value={this.state.createRoomName}
+                placeholder="Enter New Room Name"
+              />
+              <TextInput
+                style={styles.homePageInputs}
+                onChangeText={(text) => this.setState({ newRoomPurpose: text })}
+                value={this.state.newRoomPurpose}
+                placeholder="What is the purpose of this room?"
+              />
+              <TextInput
+                style={styles.homePageInputs}
+                onChangeText={(text) => this.setState({ newRoomUserName: text })}
+                value={this.state.newRoomUserName}
+                placeholder="What is your name?"
+              />
+            </View>
+            <View style={styles.homePageButtons}>
+              <Button
+                // onPress={this.handleCreateRoom}
+                onPress={() => navigate('Rooms')}
+                title="Create Room"
+                accessibilityLabel="Create Room"
+                color="white"
+                style={styles.homePageButtons}
+              />
+            </View>
+          </View>
 
-        {/* end of create room button */}
+          {/* end of create room button */}
 
-        {/* join room input & button */}
+          {/* join room input & button */}
+          <View style={styles.sectionContainer}>
+            <View>
+              <Text style={styles.homePageHeaders}>Enter Existing Room</Text>
+            </View>
+            <View>
+              <TextInput
+                style={styles.homePageInputs}
+                onChangeText={(text) => this.setState({ joinRoomName: text })}
+                value={this.state.joinRoomName}
+                placeholder="Input name of existing room"
+              />
+              <TextInput
+                style={styles.homePageInputs}
+                onChangeText={(text) => this.setState({ joinRoomUserName: text })}
+                value={this.state.joinRoomUserName}
+                placeholder="What is your name?"
+              />
 
-        <View>
-          <TextInput
-            style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-            onChangeText={(text) => this.setState({ joinRoomName: text })}
-            value={this.state.roomInput}
-            placeholder="Input name of existing room"
-          />
+            </View>
 
-        </View>
+            <View style={styles.homePageButtons}>
+              <Button
+                onPress={this.testFunc}
+                title="Join Room"
+                accessibilityLabel="Join Room"
+                // need to change this onPress to join room
+                // onPress={this.props.createNewRoom({ name: roomName })}
+                color="white"
+              />
+            </View>
+          </View>
 
-        <View style={styles.homePageButtons}>
-          <Button
-            title="Join Room"
-            accessibilityLabel="Join Room"
-            // need to change this onPress to join room
-            // onPress={this.props.createNewRoom({ name: roomName })}
-            onPress={this.testFunc}
-          />
-        </View>
-
-        {/* end of join room input & button */}
-
+          {/* end of join room input & button */}
+        </ScrollView>
       </View>
     );
   }
@@ -110,35 +143,24 @@ export default connect(null, mapDispatchToProps)(HomeScreen)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    justifyContent: 'center',
+    paddingHorizontal: 20
   },
-
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
+  sectionContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20
   },
   homePageButtons: {
-    backgroundColor: 'blue',
+    backgroundColor: '#d9f441',
     borderColor: 'white',
     borderWidth: 1,
-    borderRadius: 12,
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-    overflow: 'hidden',
+    borderRadius: 8,
     padding: 12,
-    textAlign: 'center',
+    margin: 10
   },
-  contentContainer: {
-    paddingTop: 30,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
+  homePageButtonText: {
+    color: 'white'
   },
   welcomeImage: {
     width: 100,
@@ -147,64 +169,17 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginLeft: -10,
   },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
+  homePageHeaders: {
     textAlign: 'center',
+    fontSize: 25,
+    padding: 10,
+    fontFamily: 'ubuntu'
   },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
+  homePageInputs: {
+    margin: 5,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1
+  }
 });
+

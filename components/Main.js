@@ -9,7 +9,7 @@ import {
 
 class Main extends React.Component {
   static navigationOptions = {
-    title: 'Chatter',
+    title: 'Undecided',
   };
 
   state = {

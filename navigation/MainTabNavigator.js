@@ -4,15 +4,13 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
-import LoginScreen from '../screens/LoginScreen';
-import ChatScreen from '../screens/ChatScreen'
+import RoomScreen from '../screens/RoomScreen'
 
-const ChatStack = createStackNavigator({
-  Chat: ChatScreen
+const RoomStack = createStackNavigator({
+  Room: RoomScreen
 })
 
-ChatStack.navigationOptions = {
+RoomStack.navigationOptions = {
   tabBarLabel: 'Chat',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
@@ -31,7 +29,7 @@ const HomeStack = createStackNavigator({
 });
 
 HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+  tabBarLabel: 'Create or Join',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -44,37 +42,8 @@ HomeStack.navigationOptions = {
   ),
 };
 
-const LinksStack = createStackNavigator({
-  Links: LinksScreen,
-});
-
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'}
-    />
-  ),
-};
-
-const LoginStack = createStackNavigator({
-  Login: LoginScreen,
-});
-
-LoginStack.navigationOptions = {
-  tabBarLabel: 'Login',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
-    />
-  ),
-};
 
 export default createBottomTabNavigator({
   HomeStack,
-  LinksStack,
-  LoginStack,
-  ChatStack
+  RoomStack
 });
