@@ -1,12 +1,27 @@
-import { CREATE_ROOM } from "../rooms/actions"
+import { CREATE_ROOM, JOIN_ROOM, SUBMIT_IDEA, GET_ROOM_INFO } from "../rooms/actions"
 
-const intitialState = []
+const intitialState = {
+  roomName: "",
+  users: "",
+  ideas: [],
+  room: {}
+}
 
 export default (state = intitialState, action) => {
   switch (action.type) {
 
     case CREATE_ROOM:
-      return [...state, action.room]
+      return { ...state, roomName: action.room }
+
+    case JOIN_ROOM:
+      return { ...state, roomName: action.room }
+
+    case SUBMIT_IDEA:
+      return { ...state, ideas: [...state.ideas, action.idea] }
+
+    case GET_ROOM_INFO:
+      return { ...state, room: action.room }
+
 
     default: return state
   }

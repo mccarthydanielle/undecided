@@ -1,7 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { createStackNavigator } from 'react-navigation';
-import { HeaderBackButton } from 'react-navigation';
 import {
   Image,
   Platform,
@@ -13,8 +11,8 @@ import {
   TextInput
 } from 'react-native';
 
-
-export default class RoomScreen extends React.Component {
+import { submitIdea, getRoom } from '../redux/reducers/rooms/actions'
+class RoomScreen extends React.Component {
   static navigationOptions = {
     title: 'Undecided!'
   };
@@ -23,39 +21,73 @@ export default class RoomScreen extends React.Component {
     this.state = {
       owner: false,
       submittedIdea: false,
-      allUsers: {},
       ideas: {},
       prompt: '',
-      userIdea: ''
+      userIdea: '',
+      roomName: '',
+      ownerName: '',
+      people: {},
     }
+    this.handleIdeaSubmit = this.handleIdeaSubmit.bind(this)
+  }
+
+  handleIdeaSubmit() {
+    const { user, roomName } = this.props.navigation.state.params
+    this.setState({ submittedIdea: true })
+    this.props.submitIdea(user, this.state.userIdea, roomName)
+  }
+
+  async componentDidMount() {
+    const { roomName } = this.props.navigation.state.params
+    this.props.getRoom(roomName)
+    console.log('component mounted', this.props)
+    // this.setState({
+    //   roomName: this.props.room.name,
+    //   ownerName: this.props.room.owner,
+    //   people: this.props.room.people,
+
+    // })
   }
 
   render() {
+    console.log('rerendering', this.state)
     return (
       <View style={styles.container}>
 
         <ScrollView contentContainerStyle={styles.contentContainer}>
+          <View>
+            <Text>Room name: roomname</Text>
+          </View>
+          <View>
+            <Text>This room was created by: ownername</Text>
+          </View>
+          <View>
+            <Text>What are we deciding? prompt</Text>
+          </View>
 
-          <View>
-            <Text>This room was created by OWNER NAME</Text>
-          </View>
-          <View>
-            <Text>This is the prompt</Text>
-          </View>
-          <View style={styles.container}>
-            <TextInput
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-              onChangeText={(text) => this.setState({ userIdea: text })}
-              value={this.state.createRoomName}
-              placeholder="Enter your idea."
-            />
-            <TouchableOpacity
-              style={styles.button}
-              onPress={this.onPress}
-            >
-              <Text> Submit Idea. </Text>
-            </TouchableOpacity>
-          </View>
+          {/* checking whether or not the user has submitted an idea and altering the view */}
+
+          {!this.state.submittedIdea ?
+
+            <View style={styles.container}>
+              <TextInput
+                style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                onChangeText={(text) => this.setState({ userIdea: text })}
+                value={this.state.createRoomName}
+                placeholder="Enter your idea."
+              />
+              <TouchableOpacity
+                style={styles.button}
+                onPress={this.handleIdeaSubmit}
+              >
+                <Text> Submit Idea. </Text>
+              </TouchableOpacity>
+            </View> :
+            <View>
+              <Text>Your idea was: {this.props.userIdea}</Text>
+            </View>
+          }
+
           <View style={styles.getStartedContainer}>
             <Text>IDEAS</Text>
           </View>
@@ -70,6 +102,16 @@ export default class RoomScreen extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  room: state.room
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  getRoom: (roomName) => dispatch(getRoom(roomName)),
+  submitIdea: (user, idea, roomName) => dispatch(submitIdea(user, idea, roomName))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(RoomScreen)
 
 
 const styles = StyleSheet.create({
@@ -82,69 +124,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 10
-  },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 30,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
+  }
 });

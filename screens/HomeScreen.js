@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { createStackNavigator } from 'react-navigation';
 import {
   ScrollView,
   StyleSheet,
@@ -10,7 +9,7 @@ import {
   Button
 } from 'react-native';
 
-import { createRoom } from '../redux/reducers/rooms/actions'
+import { createRoom, joinRoom } from '../redux/reducers/rooms/actions'
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -25,12 +24,8 @@ class HomeScreen extends React.Component {
       newRoomUserName: '',
       joinRoomUserName: ''
     }
-    this.testFunc = this.testFunc.bind(this)
     this.handleCreateRoom = this.handleCreateRoom.bind(this)
-  }
-
-  testFunc() {
-    console.log('heyyy')
+    this.handleJoinRoom = this.handleJoinRoom.bind(this)
   }
 
   handleCreateRoom() {
@@ -39,16 +34,26 @@ class HomeScreen extends React.Component {
       prompt: this.state.newRoomPurpose,
       owner: this.state.newRoomUserName
     })
-
-    this.props.navigation.navigate('ChatScreen')
+    const { navigate } = this.props.navigation;
+    navigate('Room',
+      { roomName: this.state.createRoomName, owner: this.state.newRoomUserName, user: this.state.newRoomUserName, prompt: this.state.newRoomPurpose }
+    )
   }
 
   handleJoinRoom() {
-
+    const { navigate } = this.props.navigation;
+    let data = {
+      userName: this.state.joinRoomUserName,
+      room: this.state.joinRoomName
+    }
+    this.props.joinRoom(data)
+    navigate('Room',
+      { roomName: this.state.joinRoomName, user: this.state.joinRoomUserName }
+    )
   }
 
+
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
         <ScrollView>
@@ -79,8 +84,7 @@ class HomeScreen extends React.Component {
             </View>
             <View style={styles.homePageButtons}>
               <Button
-                // onPress={this.handleCreateRoom}
-                onPress={() => navigate('Rooms')}
+                onPress={this.handleCreateRoom}
                 title="Create Room"
                 accessibilityLabel="Create Room"
                 color="white"
@@ -114,11 +118,9 @@ class HomeScreen extends React.Component {
 
             <View style={styles.homePageButtons}>
               <Button
-                onPress={this.testFunc}
+                onPress={this.handleJoinRoom}
                 title="Join Room"
                 accessibilityLabel="Join Room"
-                // need to change this onPress to join room
-                // onPress={this.props.createNewRoom({ name: roomName })}
                 color="white"
               />
             </View>
@@ -133,7 +135,8 @@ class HomeScreen extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  createNewRoom: (room) => dispatch(createRoom(room))
+  createNewRoom: (room) => dispatch(createRoom(room)),
+  joinRoom: (data) => dispatch(joinRoom(data))
 })
 
 
