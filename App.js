@@ -4,7 +4,6 @@ import { AppLoading, Asset, Font, Icon } from 'expo';
 import AppNavigator from './navigation/AppNavigator'
 import { Provider } from 'react-redux';
 import store from './redux/store'
-
 export default class App extends React.Component {
   state = {
     isLoadingComplete: false,
@@ -13,11 +12,13 @@ export default class App extends React.Component {
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
-        <AppLoading
-          startAsync={this._loadResourcesAsync}
-          onError={this._handleLoadingError}
-          onFinish={this._handleFinishLoading}
-        />
+        <Provider store={store}>
+          <AppLoading
+            startAsync={this._loadResourcesAsync}
+            onError={this._handleLoadingError}
+            onFinish={this._handleFinishLoading}
+          />
+        </Provider>
       );
     } else {
       return (
@@ -44,6 +45,8 @@ export default class App extends React.Component {
         // to remove this if you are not using it in your app
         'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
         'ubuntu': require('./assets/fonts/Ubuntu-Bold.ttf'),
+        'cabin-reg': require('./assets/fonts/CabinSketch-Regular.ttf'),
+        'cabin-bold': require('./assets/fonts/CabinSketch-Bold.ttf')
       }),
     ]);
   };

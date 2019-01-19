@@ -5,6 +5,6 @@ import roomsReducer from './rooms/reducer'
 
 //combining sub-reducers
 
-const rootReducer = combineReducers({ rooms: roomsReducer })
+const rootReducer = combineReducers({ room: roomsReducer })
 
 export default rootReducer

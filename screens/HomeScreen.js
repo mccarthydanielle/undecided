@@ -1,4 +1,5 @@
 import React from 'react';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { connect } from 'react-redux';
 import {
   ScrollView,
@@ -6,7 +7,8 @@ import {
   View,
   TextInput,
   Text,
-  Button
+  Button,
+  KeyboardAvoidingView
 } from 'react-native';
 
 import { createRoom, joinRoom } from '../redux/reducers/rooms/actions'
@@ -55,7 +57,7 @@ class HomeScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView behavior="padding" style={styles.container}>
         <ScrollView>
           {/* create room button */}
           <View style={styles.sectionContainer}>
@@ -126,9 +128,10 @@ class HomeScreen extends React.Component {
             </View>
           </View>
 
+
           {/* end of join room input & button */}
         </ScrollView>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 
