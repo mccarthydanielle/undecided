@@ -145,11 +145,16 @@ export const decisionMade = decision => ({
 //thunk
 
 export const makeDecision = (roomName) => {
-  return (dispatch, getState) => {
-    let decision = ""
-    //code to grab all the ideas in a room and choose a random one
-
-    dispatch(decisionMade(decision))
+  return (dispatch) => {
+    database.ref(`rooms/${roomName}/ideas`).once('value', (snapshot) => {
+      const ideas = [];
+      snapshot.forEach((childSnapshot) => {
+        ideas.push(childSnapshot)
+      })
+      let decision = ideas[Math.floor(Math.random() * ideas.length)];
+      console.log('decision made!', decision)
+      dispatch(decisionMade(decision))
+    })
   }
 }
 

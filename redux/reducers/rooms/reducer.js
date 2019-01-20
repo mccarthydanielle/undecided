@@ -35,7 +35,6 @@ export default (state = intitialState, action) => {
     case GUEST_ADDED:
       return { ...state }
 
-
     case MAKE_DECISION:
       return { ...state, decision: action.decision }
 

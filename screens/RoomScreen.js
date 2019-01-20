@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { ListItem, List, Avatar } from 'react-native-elements'
 
-import { submitIdea, getRoom, userJoinedRoomEvent, userSubmittedIdeaEvent } from '../redux/reducers/rooms/actions'
+import { submitIdea, getRoom, userJoinedRoomEvent, userSubmittedIdeaEvent, makeDecision } from '../redux/reducers/rooms/actions'
 class RoomScreen extends React.Component {
   static navigationOptions = {
     title: 'Undecided!'
@@ -44,7 +44,8 @@ class RoomScreen extends React.Component {
   }
 
   handleDeciding() {
-    console.log('Im deciding!')
+    const { user, roomName } = this.props.navigation.state.params
+    this.props.makeDecision(roomName)
   }
 
   render() {
@@ -114,6 +115,7 @@ class RoomScreen extends React.Component {
                 title="Decide!"
                 accessibilityLabel="Decide"
               />
+              <Text>Hey!</Text>
             </View> :
             null}
 
@@ -159,7 +161,8 @@ const mapDispatchToProps = (dispatch) => ({
   getRoom: (roomName) => dispatch(getRoom(roomName)),
   submitIdea: (user, idea, roomName) => dispatch(submitIdea(user, idea, roomName)),
   listenForUsers: (roomName) => dispatch(userJoinedRoomEvent(roomName)),
-  listenForIdeas: (roomName) => dispatch(userSubmittedIdeaEvent(roomName))
+  listenForIdeas: (roomName) => dispatch(userSubmittedIdeaEvent(roomName)),
+  makeDecision: (roomName) => dispatch(makeDecision(roomName))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RoomScreen)
