@@ -6,14 +6,10 @@ import { connect } from 'react-redux';
 import {
   ScrollView,
   Text,
-  TouchableOpacity,
   View,
-  TextInput,
-  StyleSheet,
-  Button
-
+  StyleSheet
 } from 'react-native';
-import { ListItem, List, Avatar } from 'react-native-elements'
+import { ListItem, List, Avatar, Divider } from 'react-native-elements'
 
 import { submitIdea, getRoom, userJoinedRoomEvent, userSubmittedIdeaEvent, makeDecision, ownerMakingDecision } from '../redux/reducers/rooms/actions'
 class RoomScreen extends React.Component {
@@ -24,7 +20,8 @@ class RoomScreen extends React.Component {
     super(props)
     this.state = {
       submittedIdea: false,
-      userIdea: ''
+      userIdea: '',
+      submitError: ''
     }
     this.handleIdeaSubmit = this.handleIdeaSubmit.bind(this)
     this.handleDeciding = this.handleDeciding.bind(this)
@@ -41,13 +38,19 @@ class RoomScreen extends React.Component {
   }
 
   handleInputChange(text) {
-    this.setState({ userIdea: text })
+    this.setState({ userIdea: text, submitError: "" })
   }
 
   handleIdeaSubmit() {
-    const { user, roomName } = this.props.navigation.state.params
-    this.setState({ submittedIdea: true })
-    this.props.submitIdea(user, this.state.userIdea, roomName)
+    if (this.state.userIdea.length === 0) {
+      this.setState({
+        submitError: 'Please enter valid idea!'
+      })
+    } else {
+      const { user, roomName } = this.props.navigation.state.params
+      this.setState({ submittedIdea: true })
+      this.props.submitIdea(user, this.state.userIdea, roomName)
+    }
   }
 
   handleDeciding() {
@@ -87,7 +90,7 @@ class RoomScreen extends React.Component {
               <Text style={styles.roomScreenPromptText}>{this.props.room.prompt}</Text>
             </View>
           </View>
-
+          <Divider />
           {/* has the decision been made? */}
 
           {this.props.decision.length === 0 ?
@@ -101,6 +104,7 @@ class RoomScreen extends React.Component {
               handleInputChange={this.handleInputChange}
               handleIdeaSubmit={this.handleIdeaSubmit}
               handleDeciding={this.handleDeciding}
+              submitError={this.state.submitError}
             />
             : <IdeaChosen decision={this.props.decision} decisionUser={decisionUser} />
           }
@@ -157,11 +161,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(RoomScreen)
 
 
 const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10
-  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -196,6 +195,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     padding: 5,
+    margin: 5
   },
   roomScreenSpecialText: {
     textAlign: 'center',

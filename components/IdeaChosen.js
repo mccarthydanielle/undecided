@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { PacmanIndicator } from 'react-native-indicators';
-import { decisionMade } from '../redux/reducers/rooms/actions';
+import { Button } from 'react-native-elements';
 
 export default class IdeaChosen extends Component {
   constructor() {
     super()
     this.state = {
-      animating: true
+      animating: true,
+      open: false
     }
     this.closeActivityIndicator = this.closeActivityIndicator.bind(this)
   }
@@ -34,7 +35,11 @@ export default class IdeaChosen extends Component {
             />
           </View>
           :
-          <Text>The deccision is ... {decision}. {decisionUser} made this decision! </Text>
+          <View style={styles.winner}>
+            <Text style={styles.winnerText}>The decision is: </Text>
+            <Text style={styles.winnerText}>{decision}!</Text>
+            <Text style={styles.winnerText}>{decisionUser} made this decision.</Text>
+          </View>
         }
       </View>
     )
@@ -42,6 +47,18 @@ export default class IdeaChosen extends Component {
 }
 
 const styles = StyleSheet.create({
+  winner: {
+    backgroundColor: '#a2ba1a',
+    height: 400,
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center'
+  },
+  winnerText: {
+    color: 'white',
+    fontSize: 30,
+    margin: 10
+  },
   container: {
     flex: 1,
     justifyContent: 'center',

@@ -11,7 +11,7 @@ export class IdeaCard extends React.Component {
           if (idea !== "") {
             return (
               <View key={i} style={styles.idea}>
-                <Text>{idea}</Text>
+                <Text style={styles.ideaText}>{idea}</Text>
               </View>
             )
           }
@@ -25,12 +25,8 @@ export class IdeaCard extends React.Component {
   }
 }
 
-
-
 const styles = StyleSheet.create({
   card: {
-    borderColor: 'black',
-    borderWidth: 1,
     margin: 5,
     flex: 1,
     flexDirection: 'row',
@@ -38,9 +34,22 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap'
   },
   idea: {
-    width: 50,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#d6d7da',
+    borderRadius: 4,
+    borderWidth: 0.5,
+    margin: 5,
+    width: '30%',
     height: 50,
-    backgroundColor: 'powderblue'
+    backgroundColor: 'rgba(162, 186, 26, 0.4)'
+  },
+  ideaText: {
+    margin: 3,
+    flex: 1,
+    textAlign: 'center',
+    color: 'white'
   }
 })
 
