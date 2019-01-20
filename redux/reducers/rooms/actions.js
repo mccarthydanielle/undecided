@@ -15,13 +15,16 @@ export const createRoom = (newRoom = {}, showCreateError) => {
       prompt: newRoom.prompt,
       owner: newRoom.owner,
       people: newRoom.owner,
-      ideas: "ideas"
+      ideas: "ideas",
+      decision: ""
     }
     database.ref(`rooms/${room.name}`).set(room).then(() => {
       database.ref(`rooms/${room.name}/prompt`).set(room.prompt).then(() => {
         database.ref(`rooms/${room.name}/owner`).set(room.owner).then(() => {
           database.ref(`rooms/${room.name}/people/${room.people}`).set(room.people).then(() => {
-            database.ref(`rooms/${room.name}/ideas/`).set(room.ideas)
+            database.ref(`rooms/${room.name}/ideas/`).set(room.ideas).then(() => {
+              database.ref(`rooms/${room.name}/decision/`).set(room.decision)
+            })
           })
         })
       })
@@ -107,13 +110,14 @@ export const getRoom = roomName => {
       newRoomObject.peopleAndIdeas = ideasAndPeople
       newRoomObject.users = users
       newRoomObject.ideas = ideas
+      newRoomObject.decision = roomInfo.decision
 
 
     }).then(() => dispatch(afterGettingRoomInfo(newRoomObject)))
   }
 }
 
-/*===========listening to database for user joining room===============*/
+/*===========listening to database thunks===============*/
 
 export const userJoinedRoomEvent = (roomName) => {
   return (dispatch) => {
@@ -128,6 +132,14 @@ export const userSubmittedIdeaEvent = (roomName) => {
     database.ref(`rooms/${roomName}/ideas`).on('child_added', (snap) => {
       dispatch(getRoom(roomName))
     });
+  }
+}
+
+export const ownerMakingDecision = (roomName) => {
+  return (dispatch) => {
+    database.ref(`rooms/${roomName}`).on('child_changed', (snap) => {
+      dispatch(getRoom(roomName))
+    })
   }
 }
 

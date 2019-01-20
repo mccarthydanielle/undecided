@@ -1,6 +1,7 @@
 import React from 'react';
 import { avatars } from '../assets/avatars/roomScreenAvatars'
-import { IdeaCard } from '../components/IdeaCard'
+import NoDecision from '../components/NoDecision'
+import IdeaChosen from '../components/IdeaChosen'
 import { connect } from 'react-redux';
 import {
   ScrollView,
@@ -14,7 +15,7 @@ import {
 } from 'react-native';
 import { ListItem, List, Avatar } from 'react-native-elements'
 
-import { submitIdea, getRoom, userJoinedRoomEvent, userSubmittedIdeaEvent, makeDecision } from '../redux/reducers/rooms/actions'
+import { submitIdea, getRoom, userJoinedRoomEvent, userSubmittedIdeaEvent, makeDecision, ownerMakingDecision } from '../redux/reducers/rooms/actions'
 class RoomScreen extends React.Component {
   static navigationOptions = {
     title: 'Undecided!'
@@ -27,6 +28,7 @@ class RoomScreen extends React.Component {
     }
     this.handleIdeaSubmit = this.handleIdeaSubmit.bind(this)
     this.handleDeciding = this.handleDeciding.bind(this)
+    this.handleInputChange = this.handleInputChange.bind(this)
   }
 
   async componentDidMount() {
@@ -34,7 +36,12 @@ class RoomScreen extends React.Component {
     await this.props.getRoom(roomName)
     this.props.listenForUsers(roomName)
     this.props.listenForIdeas(roomName)
+    this.props.listenForDecision(roomName)
 
+  }
+
+  handleInputChange(text) {
+    this.setState({ userIdea: text })
   }
 
   handleIdeaSubmit() {
@@ -44,15 +51,20 @@ class RoomScreen extends React.Component {
   }
 
   handleDeciding() {
-    const { user, roomName } = this.props.navigation.state.params
+    const { roomName } = this.props.navigation.state.params
     this.props.makeDecision(roomName)
   }
 
   render() {
-    console.log('decision', this.props.decision)
-    const { users, ideas } = this.props
+    const { users, ideas, decision, peopleAndIdeas } = this.props
     const { owner } = this.props.room
     const { user } = this.props.navigation.state.params
+    let decisionUser = "";
+
+    if (decision.length > 0) {
+      Object.keys(peopleAndIdeas).some((key) => peopleAndIdeas[key] === decision ? decisionUser = key : null)
+    }
+
     return (
       <View style={styles.container}>
 
@@ -76,49 +88,22 @@ class RoomScreen extends React.Component {
             </View>
           </View>
 
-          {/* list of ideas */}
-          <View style={styles.getStartedContainer}>
-            <Text style={styles.homePageHeaders}>Submitted Ideas.</Text>
-            {ideas ?
-              <IdeaCard ideas={ideas} />
-              : null}
-          </View>
+          {/* has the decision been made? */}
 
-          {/* checking whether or not the user has submitted an idea and altering the view */}
-
-          {!this.state.submittedIdea ?
-            // showing submission input
-            <View style={styles.container}>
-              <TextInput
-                style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                onChangeText={(text) => this.setState({ userIdea: text })}
-                value={this.state.createRoomName}
-                placeholder="Enter your idea."
-              />
-              <TouchableOpacity
-                style={styles.button}
-                onPress={this.handleIdeaSubmit}
-              >
-                <Text> Submit Idea. </Text>
-              </TouchableOpacity>
-            </View> :
-            // showing what the users idea is after submission
-            <View>
-              <Text>Your idea was: {this.props.room.peopleAndIdeas[user]}</Text>
-            </View>
+          {this.props.decision.length === 0 ?
+            <NoDecision
+              ideas={ideas}
+              room={this.props.room}
+              user={user}
+              owner={owner}
+              submittedIdea={this.state.submittedIdea}
+              submissionInput={this.state.userIdea}
+              handleInputChange={this.handleInputChange}
+              handleIdeaSubmit={this.handleIdeaSubmit}
+              handleDeciding={this.handleDeciding}
+            />
+            : <IdeaChosen decision={this.props.decision} decisionUser={decisionUser} />
           }
-
-          {/* checking if the user is the owner - deciding whether to show picker button */}
-          {user === owner ?
-            <View>
-              <Button
-                onPress={this.handleDeciding}
-                title="Decide!"
-                accessibilityLabel="Decide"
-              />
-              <Text>Hey!</Text>
-            </View> :
-            null}
 
           {/* list of users */}
 
@@ -155,7 +140,8 @@ const mapStateToProps = state => ({
   room: state.room.room,
   users: state.room.users,
   ideas: state.room.ideas,
-  decision: state.room.decision
+  decision: state.room.decision,
+  peopleAndIdeas: state.room.peopleAndIdeas
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -163,7 +149,8 @@ const mapDispatchToProps = (dispatch) => ({
   submitIdea: (user, idea, roomName) => dispatch(submitIdea(user, idea, roomName)),
   listenForUsers: (roomName) => dispatch(userJoinedRoomEvent(roomName)),
   listenForIdeas: (roomName) => dispatch(userSubmittedIdeaEvent(roomName)),
-  makeDecision: (roomName) => dispatch(makeDecision(roomName))
+  makeDecision: (roomName) => dispatch(makeDecision(roomName)),
+  listenForDecision: (roomName) => dispatch(ownerMakingDecision(roomName))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RoomScreen)

@@ -1,29 +1,45 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { PacmanIndicator } from 'react-native-indicators';
+import { decisionMade } from '../redux/reducers/rooms/actions';
 
-class ActivityIndicatorExample extends Component {
-  state = { animating: true }
+export default class IdeaChosen extends Component {
+  constructor() {
+    super()
+    this.state = {
+      animating: true
+    }
+    this.closeActivityIndicator = this.closeActivityIndicator.bind(this)
+  }
+  componentDidMount() {
+    this.closeActivityIndicator()
+  }
 
-  closeActivityIndicator = () => setTimeout(() => this.setState({
-    animating: false
-  }), 60000)
+  closeActivityIndicator() {
+    return setTimeout(() => {
+      this.setState({ animating: false })
+    }, 3000)
+  }
 
-  componentDidMount = () => this.closeActivityIndicator()
   render() {
     const animating = this.state.animating
+    const { decision, decisionUser } = this.props
     return (
-      <View style={styles.container}>
-        <ActivityIndicator
-          animating={animating}
-          color='#bc2b78'
-          size="large"
-          style={styles.activityIndicator} />
-        <Text> HEY </Text>
+      <View>
+        {animating ?
+          <View style={styles.container}>
+            <Text style={styles.decidingText}>Deciding...</Text>
+            <PacmanIndicator
+              animating={animating}
+            />
+          </View>
+          :
+          <Text>The deccision is ... {decision}. {decisionUser} made this decision! </Text>
+        }
       </View>
     )
   }
 }
-export default ActivityIndicatorExample
 
 const styles = StyleSheet.create({
   container: {
@@ -37,6 +53,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 80
+  },
+  decidingText: {
+    textAlign: 'center',
+    fontSize: 25,
+    padding: 5,
+    fontFamily: 'cabin-bold'
   }
 })
 
