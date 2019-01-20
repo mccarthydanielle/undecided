@@ -5,7 +5,8 @@ const intitialState = {
   users: [],
   ideas: [],
   room: {},
-  decision: ''
+  decision: '',
+  peopleAndIdeas: {}
 }
 
 export default (state = intitialState, action) => {
@@ -29,7 +30,9 @@ export default (state = intitialState, action) => {
       return {
         ...state, room: action.room,
         users: action.room.users,
-        ideas: action.room.ideas
+        ideas: action.room.ideas,
+        decision: action.room.decision,
+        peopleAndIdeas: action.room.peopleAndIdeas
       }
 
     case GUEST_ADDED:
