@@ -1,19 +1,29 @@
 import React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Button } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { Button, Icon } from 'native-base';
 import { IdeaCard } from '../components/IdeaCard'
+
 
 
 export default class NoDecision extends React.Component {
   render() {
-    const { ideas, user, owner, submittedIdea } = this.props
+    const { ideas, user, owner, submittedIdea, submitError } = this.props
     return (
-      <View>
+      <View >
         {/* list of ideas */}
-        <View style={styles.getStartedContainer}>
-          <Text style={styles.homePageHeaders}>Submitted Ideas.</Text>
-          {ideas ?
-            <IdeaCard ideas={ideas} />
-            : null}
+        <View>
+          {ideas.length ?
+            <View style={{
+              borderRadius: 4,
+              borderWidth: 0.5,
+              borderColor: '#d6d7da',
+            }}>
+              <Text style={styles.homePageHeaders}>Submitted Ideas</Text>
+              <IdeaCard ideas={ideas} />
+            </View>
+            :
+            <Text style={styles.homePageHeaders}>No ideas have been submitted.</Text>
+          }
         </View>
 
         {/* checking whether or not the user has submitted an idea and altering the view */}
@@ -27,6 +37,7 @@ export default class NoDecision extends React.Component {
               value={this.props.submissionInput}
               placeholder="Enter your idea."
             />
+            <Text style={styles.error}>{submitError}</Text>
             <TouchableOpacity
               style={styles.button}
               onPress={this.props.handleIdeaSubmit}
@@ -35,21 +46,25 @@ export default class NoDecision extends React.Component {
             </TouchableOpacity>
           </View> :
           // showing what the users idea is after submission
-          <View>
-            <Text>Your idea was: {this.props.room.peopleAndIdeas[user]}</Text>
+          <View style={styles.border}>
+            <Text style={styles.roomScreenText}>Your idea was: {this.props.room.peopleAndIdeas[user]}</Text>
           </View>
         }
 
         {/* checking if the user is the owner - deciding whether to show picker button */}
-        {user === owner ?
-          <View>
-            <Button
-              onPress={this.props.handleDeciding}
-              title="Decide!"
-              accessibilityLabel="Decide"
-            />
-          </View> :
-          null}
+        <View style={{ alignItems: 'center' }}>
+          {user === owner && ideas.length >= 2 ?
+            <View style={styles.container}>
+
+              <Button primary
+                onPress={this.props.handleDeciding}
+              >
+                <Text style={styles.decideButtonText}>Decide!</Text>
+              </Button>
+
+            </View> :
+            null}
+        </View>
       </View>
     )
   }
@@ -63,11 +78,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#DDDDDD',
     padding: 10
   },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 10,
+  border: {
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
     margin: 10
+  },
+  decideButtonText: {
+    color: 'white',
+    margin: 5
+  },
+  container: {
+    paddingHorizontal: 10,
+    margin: 10,
+
   },
   homePageHeaders: {
     textAlign: 'center',
@@ -80,8 +104,9 @@ const styles = StyleSheet.create({
     margin: 10
   },
   roomScreenWelcomeText: {
+    alignItems: 'center',
     textAlign: 'center',
-    fontSize: 25,
+    fontSize: 40,
     padding: 5,
     fontFamily: 'ubuntu',
 
@@ -112,6 +137,10 @@ const styles = StyleSheet.create({
     margin: 10,
     color: '#a2ba1a',
     fontFamily: 'cabin-reg'
+  },
+  error: {
+    color: 'red',
+    margin: 5
   }
 
 });
