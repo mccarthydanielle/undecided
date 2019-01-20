@@ -4,17 +4,25 @@ import { Container, StyleSheet, View, Text } from 'react-native';
 
 export class IdeaCard extends React.Component {
   render() {
-    return <View style={styles.card}>
-      {Object.values(this.props.ideas).map((idea, i) => {
-        if (idea !== "") {
-          return (
-            <View style={styles.idea} key={i}>
-              <Text>{idea}</Text>
-            </View>)
+    console.log('ideas in idea card', this.props.ideas)
+
+    if (this.props.ideas && typeof this.props.ideas[this.props.ideas.length - 1] === "string") {
+      return <View style={styles.card}>
+        {this.props.ideas.map((idea, i) => {
+          if (idea !== "") {
+            return (
+              <View key={i} style={styles.idea}>
+                <Text>{idea}</Text>
+              </View>
+            )
+          }
         }
-      }
-      )}
-    </View>
+        )}
+      </View>
+    } else {
+      return <View>
+      </View>
+    }
   }
 }
 

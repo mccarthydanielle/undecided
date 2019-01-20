@@ -3,7 +3,7 @@ import { CREATE_ROOM, JOIN_ROOM, SUBMIT_IDEA, GET_ROOM_INFO, GUEST_ADDED } from 
 const intitialState = {
   roomName: "",
   users: [],
-  ideas: {},
+  ideas: [],
   room: {}
 }
 
@@ -22,7 +22,7 @@ export default (state = intitialState, action) => {
 
     case SUBMIT_IDEA:
 
-      return { ...state, ideas: { ...state.ideas, ...action.idea } }
+      return { ...state, ideas: [...state.ideas, action.idea] }
 
     case GET_ROOM_INFO:
       return {

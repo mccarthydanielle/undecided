@@ -14,12 +14,15 @@ export const createRoom = (newRoom = {}, showCreateError) => {
       name: newRoom.name,
       prompt: newRoom.prompt,
       owner: newRoom.owner,
-      people: newRoom.owner
+      people: newRoom.owner,
+      ideas: "ideas"
     }
     database.ref(`rooms/${room.name}`).set(room).then(() => {
       database.ref(`rooms/${room.name}/prompt`).set(room.prompt).then(() => {
         database.ref(`rooms/${room.name}/owner`).set(room.owner).then(() => {
-          database.ref(`rooms/${room.name}/people/${room.people}`).set(room.people)
+          database.ref(`rooms/${room.name}/people/${room.people}`).set(room.people).then(() => {
+            database.ref(`rooms/${room.name}/ideas/`).set(room.ideas)
+          })
         })
       })
     })
@@ -66,6 +69,7 @@ export const submitIdea = (user, idea, roomName) => {
     }
 
     database.ref(`rooms/${roomName}/people/${user}/idea`).set(idea)
+    database.ref(`rooms/${roomName}/ideas/${user}`).set(idea)
     dispatch(afterSubmitIdea(newIdea))
   }
 }
@@ -89,13 +93,8 @@ export const getRoom = roomName => {
       const roomInfo = snapshot.val()
 
       const users = Object.keys(roomInfo.people)
-      // const ideas = Object.values(roomInfo.people)
-      //somehow redo this to grab everybody's ideas
-      const ideasSet = {}
-
-      for (person in roomInfo.people) {
-        if (roomInfo.people[person].idea) ideasSet[person] = roomInfo.people[person].idea
-      }
+      let ideas = []
+      if (typeof roomInfo.ideas === "object") ideas = Object.values(roomInfo.ideas)
 
 
       newRoomObject.name = roomInfo.name
@@ -103,34 +102,31 @@ export const getRoom = roomName => {
       newRoomObject.prompt = roomInfo.prompt
       newRoomObject.peopleAndIdeas = roomInfo.people
       newRoomObject.users = users
-      newRoomObject.ideas = ideasSet
+      newRoomObject.ideas = ideas
 
 
     }).then(() => dispatch(afterGettingRoomInfo(newRoomObject)))
   }
 }
 
-/*===========listening to database===============*/
-//action
-export const GUEST_ADDED = 'GUEST_ADDED'
+/*===========listening to database for user joining room===============*/
 
-//action creator
-export const getGuestAdded = (guest) => ({
-  type: GUEST_ADDED,
-  guest
-})
-
-//thunk
-
-export const watchUserAddedEvent = (roomName) => {
+export const userJoinedRoomEvent = (roomName) => {
   return (dispatch) => {
     database.ref(`rooms/${roomName}/people`).on('child_added', (snap) => {
-      console.log('listener data', snap.val())
-      const newUser = snap.val()
-      // dispatch(getGuestAdded(snap.val()));
+      dispatch(getRoom(roomName))
     });
   }
 }
+
+export const userSubmittedIdeaEvent = (roomName) => {
+  return (dispatch) => {
+    database.ref(`rooms/${roomName}/ideas`).on('child_added', (snap) => {
+      dispatch(getRoom(roomName))
+    });
+  }
+}
+
 
 
 

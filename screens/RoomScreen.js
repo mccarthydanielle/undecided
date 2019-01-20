@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { ListItem, List, Avatar } from 'react-native-elements'
 
-import { submitIdea, getRoom, watchUserAddedEvent } from '../redux/reducers/rooms/actions'
+import { submitIdea, getRoom, userJoinedRoomEvent, userSubmittedIdeaEvent } from '../redux/reducers/rooms/actions'
 class RoomScreen extends React.Component {
   static navigationOptions = {
     title: 'Undecided!'
@@ -29,9 +29,10 @@ class RoomScreen extends React.Component {
   }
 
   async componentDidMount() {
-    const { user, roomName } = this.props.navigation.state.params
+    const { roomName } = this.props.navigation.state.params
     await this.props.getRoom(roomName)
     this.props.listenForUsers(roomName)
+    this.props.listenForIdeas(roomName)
 
   }
 
@@ -135,7 +136,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch) => ({
   getRoom: (roomName) => dispatch(getRoom(roomName)),
   submitIdea: (user, idea, roomName) => dispatch(submitIdea(user, idea, roomName)),
-  listenForUsers: (roomName) => dispatch(watchUserAddedEvent(roomName))
+  listenForUsers: (roomName) => dispatch(userJoinedRoomEvent(roomName)),
+  listenForIdeas: (roomName) => dispatch(userSubmittedIdeaEvent(roomName))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RoomScreen)
