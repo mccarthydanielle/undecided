@@ -4,7 +4,6 @@ import { Container, StyleSheet, View, Text } from 'react-native';
 
 export class IdeaCard extends React.Component {
   render() {
-    console.log('ideas in idea card', this.props.ideas)
 
     if (this.props.ideas && typeof this.props.ideas[this.props.ideas.length - 1] === "string") {
       return <View style={styles.card}>

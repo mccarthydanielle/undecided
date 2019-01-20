@@ -20,38 +20,68 @@ class HomeScreen extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      createRoomName: '',
+      createRoomName: "",
       joinRoomName: '',
       newRoomPurpose: '',
       newRoomUserName: '',
-      joinRoomUserName: ''
+      joinRoomUserName: '',
+      createError: "",
+      joinError: "",
+      yesCreateError: false
     }
     this.handleCreateRoom = this.handleCreateRoom.bind(this)
-    this.handleJoinRoom = this.handleJoinRoom.bind(this)
+    this.validateCreateRoom = this.validateCreateRoom.bind(this)
+    this.showCreateError = this.showCreateError.bind(this)
+    this.showJoinError = this.showJoinError.bind(this)
   }
 
   handleCreateRoom() {
-    this.props.createNewRoom({
-      name: this.state.createRoomName,
-      prompt: this.state.newRoomPurpose,
-      owner: this.state.newRoomUserName
-    })
     const { navigate } = this.props.navigation;
-    navigate('Room',
-      { roomName: this.state.createRoomName, owner: this.state.newRoomUserName, user: this.state.newRoomUserName, prompt: this.state.newRoomPurpose }
-    )
-  }
-
-  handleJoinRoom() {
-    const { navigate } = this.props.navigation;
-    let data = {
-      userName: this.state.joinRoomUserName,
-      room: this.state.joinRoomName
-    }
-    this.props.joinRoom(data)
     navigate('Room',
       { roomName: this.state.joinRoomName, user: this.state.joinRoomUserName }
     )
+  }
+
+
+  async validateCreateRoom() {
+    const newRoom = {
+      name: this.state.createRoomName,
+      prompt: this.state.newRoomPurpose,
+      owner: this.state.newRoomUserName
+    }
+    await this.props.createNewRoom(newRoom, this.showCreateError)
+
+    // if (this.state.createError === 'Room name not available!') {
+    // this.setState({
+    //   createError: ""
+    // })
+    console.log('lala')
+    // } else if (this.state.createError === "") {
+    //   this.handleCreateRoom()
+    // }
+    // console.log("this.state.createError", this.state.createError)
+
+    // if (this.state.createError === "") {
+    //   this.handleCreateRoom()
+    // } else {
+    //   this.setState({
+    //     createError: "",
+    //     createRoomName: ""
+    //   })
+    // }
+    // }
+  }
+
+  showCreateError = (createError) => {
+    this.setState({
+      createError
+    });
+  }
+
+  showJoinError = (joinError) => {
+    this.setState({
+      joinError
+    });
   }
 
 
@@ -71,6 +101,7 @@ class HomeScreen extends React.Component {
                 value={this.state.createRoomName}
                 placeholder="Enter New Room Name"
               />
+              <Text style={styles.errorText}>{this.state.createError}</Text>
               <TextInput
                 style={styles.homePageInputs}
                 onChangeText={(text) => this.setState({ newRoomPurpose: text })}
@@ -86,7 +117,7 @@ class HomeScreen extends React.Component {
             </View>
             <View style={styles.homePageButtons}>
               <Button
-                onPress={this.handleCreateRoom}
+                onPress={this.validateCreateRoom}
                 title="Create Room"
                 accessibilityLabel="Create Room"
                 color="white"
@@ -120,7 +151,7 @@ class HomeScreen extends React.Component {
 
             <View style={styles.homePageButtons}>
               <Button
-                onPress={this.handleJoinRoom}
+                onPress={this.validateCreateRoom}
                 title="Join Room"
                 accessibilityLabel="Join Room"
                 color="white"
@@ -138,8 +169,8 @@ class HomeScreen extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  createNewRoom: (room) => dispatch(createRoom(room)),
-  joinRoom: (data) => dispatch(joinRoom(data))
+  createNewRoom: (room, error) => dispatch(createRoom(room, error)),
+  joinRoom: (data) => dispatch(joinRoom(data, showJoinError))
 })
 
 
@@ -186,6 +217,9 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: 'gray',
     borderWidth: 1
+  },
+  errorText: {
+    color: 'red'
   }
 });
 

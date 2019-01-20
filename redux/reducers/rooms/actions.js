@@ -8,7 +8,7 @@ export const afterRoomCreate = room => ({
   room
 })
 //thunk
-export const createRoom = (newRoom = {}, showCreateError) => {
+export const createRoom = (newRoom = {}, errorFn) => {
   return (dispatch, getState) => {
     const room = {
       name: newRoom.name,
@@ -17,16 +17,33 @@ export const createRoom = (newRoom = {}, showCreateError) => {
       people: newRoom.owner,
       ideas: "ideas"
     }
-    database.ref(`rooms/${room.name}`).set(room).then(() => {
-      database.ref(`rooms/${room.name}/prompt`).set(room.prompt).then(() => {
-        database.ref(`rooms/${room.name}/owner`).set(room.owner).then(() => {
-          database.ref(`rooms/${room.name}/people/${room.people}`).set(room.people).then(() => {
-            database.ref(`rooms/${room.name}/ideas/`).set(room.ideas)
+
+    //checking whether the room exists
+    database.ref('rooms').once('value', (snapshot) => {
+      const rooms = [];
+      snapshot.forEach((childSnapshot) => {
+        rooms.push(childSnapshot.val().name)
+      })
+      if (!rooms.includes(room.name)) {
+        database.ref(`rooms/${room.name}`).set(room).then(() => {
+          database.ref(`rooms/${room.name}/prompt`).set(room.prompt).then(() => {
+            database.ref(`rooms/${room.name}/owner`).set(room.owner).then(() => {
+              database.ref(`rooms/${room.name}/people/${room.people}`).set(room.people).then(() => {
+                database.ref(`rooms/${room.name}/ideas/`).set(room.ideas)
+              })
+            })
           })
         })
-      })
+        dispatch(afterRoomCreate(room))
+      } else {
+        console.log('Room name not available!')
+        return errorFn('Room name not available!')
+      }
     })
-    dispatch(afterRoomCreate(room))
+
+
+
+
   }
 }
 /*======joining a room===============*/
