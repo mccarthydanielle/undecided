@@ -144,15 +144,30 @@ export const decisionMade = decision => ({
 
 //thunk
 
+//helper function
+function snapshotToArray(snapshot) {
+  var returnArr = [];
+
+  snapshot.forEach(function (childSnapshot) {
+    var item = childSnapshot.val();
+    item.key = childSnapshot.key;
+
+    returnArr.push(item);
+  });
+
+  return returnArr;
+};
+
 export const makeDecision = (roomName) => {
   return (dispatch) => {
+    let decision;
+    let ideas;
+
     database.ref(`rooms/${roomName}/ideas`).once('value', (snapshot) => {
-      const ideas = [];
-      snapshot.forEach((childSnapshot) => {
-        ideas.push(childSnapshot)
-      })
-      let decision = ideas[Math.floor(Math.random() * ideas.length)];
-      console.log('decision made!', decision)
+
+      ideas = snapshotToArray(snapshot);
+      decision = ideas[Math.floor(Math.random() * ideas.length)]
+      database.ref(`rooms/${roomName}/decision`).set(decision)
       dispatch(decisionMade(decision))
     })
   }

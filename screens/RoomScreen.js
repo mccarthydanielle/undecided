@@ -49,6 +49,7 @@ class RoomScreen extends React.Component {
   }
 
   render() {
+    console.log('decision', this.props.decision)
     const { users, ideas } = this.props
     const { owner } = this.props.room
     const { user } = this.props.navigation.state.params
