@@ -9,7 +9,7 @@ import {
   View,
   TextInput,
   StyleSheet,
-  Container
+  Button
 
 } from 'react-native';
 import { ListItem, List, Avatar } from 'react-native-elements'
@@ -26,6 +26,7 @@ class RoomScreen extends React.Component {
       userIdea: ''
     }
     this.handleIdeaSubmit = this.handleIdeaSubmit.bind(this)
+    this.handleDeciding = this.handleDeciding.bind(this)
   }
 
   async componentDidMount() {
@@ -42,8 +43,14 @@ class RoomScreen extends React.Component {
     this.props.submitIdea(user, this.state.userIdea, roomName)
   }
 
+  handleDeciding() {
+    console.log('Im deciding!')
+  }
+
   render() {
     const { users, ideas } = this.props
+    const { owner } = this.props.room
+    const { user } = this.props.navigation.state.params
     return (
       <View style={styles.container}>
 
@@ -66,9 +73,10 @@ class RoomScreen extends React.Component {
               <Text style={styles.roomScreenPromptText}>{this.props.room.prompt}</Text>
             </View>
           </View>
+
+          {/* list of ideas */}
           <View style={styles.getStartedContainer}>
             <Text style={styles.homePageHeaders}>Submitted Ideas.</Text>
-
             {ideas ?
               <IdeaCard ideas={ideas} />
               : null}
@@ -77,7 +85,7 @@ class RoomScreen extends React.Component {
           {/* checking whether or not the user has submitted an idea and altering the view */}
 
           {!this.state.submittedIdea ?
-
+            // showing submission input
             <View style={styles.container}>
               <TextInput
                 style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
@@ -92,12 +100,26 @@ class RoomScreen extends React.Component {
                 <Text> Submit Idea. </Text>
               </TouchableOpacity>
             </View> :
+            // showing what the users idea is after submission
             <View>
-              <Text>Your idea was: current user's idea</Text>
+              <Text>Your idea was: {this.props.room.peopleAndIdeas[user]}</Text>
             </View>
           }
 
-          <View>
+          {/* checking if the user is the owner - deciding whether to show picker button */}
+          {user === owner ?
+            <View>
+              <Button
+                onPress={this.handleDeciding}
+                title="Decide!"
+                accessibilityLabel="Decide"
+              />
+            </View> :
+            null}
+
+          {/* list of users */}
+
+          <View style={styles.container}>
             <Text style={styles.homePageHeaders}>Who else is in the room?</Text>
           </View>
 
@@ -120,7 +142,6 @@ class RoomScreen extends React.Component {
             }) : null
             }
           </List>
-
         </ScrollView>
       </View >
     );
@@ -130,7 +151,8 @@ class RoomScreen extends React.Component {
 const mapStateToProps = state => ({
   room: state.room.room,
   users: state.room.users,
-  ideas: state.room.ideas
+  ideas: state.room.ideas,
+  decision: state.room.decision
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -152,7 +174,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
+    margin: 10
   },
   homePageHeaders: {
     textAlign: 'center',
@@ -161,7 +184,8 @@ const styles = StyleSheet.create({
     fontFamily: 'ubuntu'
   },
   userListStyle: {
-    height: 40
+    height: 40,
+    margin: 10
   },
   roomScreenWelcomeText: {
     textAlign: 'center',

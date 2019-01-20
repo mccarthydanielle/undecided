@@ -96,11 +96,15 @@ export const getRoom = roomName => {
       let ideas = []
       if (typeof roomInfo.ideas === "object") ideas = Object.values(roomInfo.ideas)
 
+      let ideasAndPeople = {}
+      for (key in roomInfo.people) {
+        ideasAndPeople[key] = roomInfo.people[key].idea
+      }
 
       newRoomObject.name = roomInfo.name
       newRoomObject.owner = roomInfo.owner
       newRoomObject.prompt = roomInfo.prompt
-      newRoomObject.peopleAndIdeas = roomInfo.people
+      newRoomObject.peopleAndIdeas = ideasAndPeople
       newRoomObject.users = users
       newRoomObject.ideas = ideas
 
@@ -127,13 +131,28 @@ export const userSubmittedIdeaEvent = (roomName) => {
   }
 }
 
-
-
-
 /*===========random chooser===============*/
 //action
+export const MAKE_DECISION = 'MAKE_DECISION'
+
 //action creator
+
+export const decisionMade = decision => ({
+  type: MAKE_DECISION,
+  decision
+})
+
 //thunk
+
+export const makeDecision = (roomName) => {
+  return (dispatch, getState) => {
+    let decision = ""
+    //code to grab all the ideas in a room and choose a random one
+
+    dispatch(decisionMade(decision))
+  }
+}
+
 /*======destroying a room===============*/
 //action
 //action creator

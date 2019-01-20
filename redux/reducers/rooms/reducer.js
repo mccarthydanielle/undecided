@@ -1,10 +1,11 @@
-import { CREATE_ROOM, JOIN_ROOM, SUBMIT_IDEA, GET_ROOM_INFO, GUEST_ADDED } from "../rooms/actions"
+import { CREATE_ROOM, JOIN_ROOM, SUBMIT_IDEA, GET_ROOM_INFO, GUEST_ADDED, MAKE_DECISION } from "../rooms/actions"
 
 const intitialState = {
   roomName: "",
   users: [],
   ideas: [],
-  room: {}
+  room: {},
+  decision: ''
 }
 
 export default (state = intitialState, action) => {
@@ -34,6 +35,9 @@ export default (state = intitialState, action) => {
     case GUEST_ADDED:
       return { ...state }
 
+
+    case MAKE_DECISION:
+      return { ...state, decision: action.decision }
 
     default: return state
   }
