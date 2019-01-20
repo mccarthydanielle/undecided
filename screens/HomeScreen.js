@@ -1,5 +1,4 @@
 import React from 'react';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { connect } from 'react-redux';
 import {
   ScrollView,
@@ -40,6 +39,13 @@ class HomeScreen extends React.Component {
     navigate('Room',
       { roomName: this.state.createRoomName, owner: this.state.newRoomUserName, user: this.state.newRoomUserName, prompt: this.state.newRoomPurpose }
     )
+    this.setState({
+      createRoomName: '',
+      joinRoomName: '',
+      newRoomPurpose: '',
+      newRoomUserName: '',
+      joinRoomUserName: ''
+    })
   }
 
   handleJoinRoom() {
@@ -52,6 +58,13 @@ class HomeScreen extends React.Component {
     navigate('Room',
       { roomName: this.state.joinRoomName, user: this.state.joinRoomUserName }
     )
+    this.setState({
+      createRoomName: '',
+      joinRoomName: '',
+      newRoomPurpose: '',
+      newRoomUserName: '',
+      joinRoomUserName: ''
+    })
   }
 
 
