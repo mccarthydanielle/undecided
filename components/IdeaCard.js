@@ -1,7 +1,5 @@
 import React from 'react';
-import { Container, StyleSheet, View, Text } from 'react-native';
-
-
+import { StyleSheet, View, Text } from 'react-native';
 export class IdeaCard extends React.Component {
   render() {
 

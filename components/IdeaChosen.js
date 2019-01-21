@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { PacmanIndicator } from 'react-native-indicators';
-import { Button } from 'react-native-elements';
-
 export default class IdeaChosen extends Component {
   constructor() {
     super()

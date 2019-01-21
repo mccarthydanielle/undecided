@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { Button, Icon } from 'native-base';
+import { Button } from 'native-base';
 import { IdeaCard } from '../components/IdeaCard'
 
 
