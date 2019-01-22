@@ -36,16 +36,14 @@ class HomeScreen extends React.Component {
       owner: this.state.newRoomUserName
     })
     const { navigate } = this.props.navigation;
+    this.refs.createRoomName.clear()
+    this.refs.createRoomPurpose.clear()
+    this.refs.createRoomUser.clear()
+    this.refs.joinRoomName.clear()
+    this.refs.joinRoomUser.clear()
     navigate('Room',
       { roomName: this.state.createRoomName, owner: this.state.newRoomUserName, user: this.state.newRoomUserName, prompt: this.state.newRoomPurpose }
     )
-    this.setState({
-      createRoomName: '',
-      joinRoomName: '',
-      newRoomPurpose: '',
-      newRoomUserName: '',
-      joinRoomUserName: ''
-    })
   }
 
   handleJoinRoom() {
@@ -55,16 +53,14 @@ class HomeScreen extends React.Component {
       room: this.state.joinRoomName
     }
     this.props.joinRoom(data)
+    this.refs.createRoomName.clear()
+    this.refs.createRoomPurpose.clear()
+    this.refs.createRoomUser.clear()
+    this.refs.joinRoomName.clear()
+    this.refs.joinRoomUser.clear()
     navigate('Room',
       { roomName: this.state.joinRoomName, user: this.state.joinRoomUserName }
     )
-    this.setState({
-      createRoomName: '',
-      joinRoomName: '',
-      newRoomPurpose: '',
-      newRoomUserName: '',
-      joinRoomUserName: ''
-    })
   }
 
 
@@ -83,18 +79,21 @@ class HomeScreen extends React.Component {
                 onChangeText={(text) => this.setState({ createRoomName: text })}
                 value={this.state.createRoomName}
                 placeholder="Enter New Room Name"
+                ref="createRoomName"
               />
               <TextInput
                 style={styles.homePageInputs}
                 onChangeText={(text) => this.setState({ newRoomPurpose: text })}
                 value={this.state.newRoomPurpose}
                 placeholder="What is the purpose of this room?"
+                ref="createRoomPurpose"
               />
               <TextInput
                 style={styles.homePageInputs}
                 onChangeText={(text) => this.setState({ newRoomUserName: text })}
                 value={this.state.newRoomUserName}
                 placeholder="What is your name?"
+                ref="createRoomUser"
               />
             </View>
             <View style={styles.homePageButtons}>
@@ -121,12 +120,14 @@ class HomeScreen extends React.Component {
                 onChangeText={(text) => this.setState({ joinRoomName: text })}
                 value={this.state.joinRoomName}
                 placeholder="Input name of existing room"
+                ref="joinRoomName"
               />
               <TextInput
                 style={styles.homePageInputs}
                 onChangeText={(text) => this.setState({ joinRoomUserName: text })}
                 value={this.state.joinRoomUserName}
                 placeholder="What is your name?"
+                ref="joinRoomUser"
               />
 
             </View>
